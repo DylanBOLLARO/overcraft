@@ -8,15 +8,15 @@ function Home() {
       <Head>
         <title>sc2-build-order-overlay</title>
       </Head>
-      <div className="flex flex-col p-3 gap-3">
+      <div className="flex flex-col p-3 gap-3  bg-zinc-300">
         <p>Page d'overlay</p>
         <button
-          className="p-3 bg-zinc-300 rounded-lg"
+          className="p-3 rounded-lg"
           onClick={() => {
             ipcRenderer.invoke("create-settings-page");
           }}
         >
-          Open Settings
+          Open Settings (click me)
         </button>
       </div>
     </React.Fragment>

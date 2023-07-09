@@ -3,7 +3,7 @@ export function databaseCreation(db: any) {
     db.get(
       `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
       ["build_order"],
-      async (err, row) => {
+      async (err: any, row: any) => {
         if (err) {
           console.error(err.message);
           return;
@@ -21,7 +21,7 @@ export function databaseCreation(db: any) {
                         playrace INTEGER,
                         versusrace INTEGER
                       );`,
-                (err) => {
+                (err: any) => {
                   if (err) {
                     console.error(err.message);
                     reject(err);
@@ -40,7 +40,7 @@ export function databaseCreation(db: any) {
                           ('Crême anglaise', 0, 0),
                           ('Soupe', 1,1),
                           ('Salade de fruit', 2, 2);`,
-                (err) => {
+                (err: any) => {
                   if (err) {
                     console.error(err.message);
                     process.exit(1);
@@ -59,7 +59,7 @@ export function databaseCreation(db: any) {
     db.get(
       `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
       ["etapes"],
-      async (err, row) => {
+      async (err: any, row: any) => {
         if (err) {
           console.error(err.message);
           return;
@@ -78,7 +78,7 @@ export function databaseCreation(db: any) {
                         build_order_id INTEGER,
                         FOREIGN KEY (build_order_id) REFERENCES build_order(id) ON DELETE SET NULL
                       );`,
-                (err) => {
+                (err: any) => {
                   if (err) {
                     console.error(err.message);
                     reject(err);
@@ -103,7 +103,7 @@ export function databaseCreation(db: any) {
                           ('3', "faire un VCS",4,4),
                           ('3', "Faire un dépot",5,5),
                           ('3', "Faire une caserne",6,6);`,
-                (err) => {
+                (err: any) => {
                   if (err) {
                     console.error(err.message);
                     process.exit(1);

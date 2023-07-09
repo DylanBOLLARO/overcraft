@@ -3,14 +3,21 @@ import serve from "electron-serve";
 import { createWindow } from "./helpers";
 import * as fs from "fs";
 import * as sqlite3 from "sqlite3";
-import { PATH_DB_FOLDER, PATH_DB_FILE } from "./constants.js";
+import { databaseCreation } from "./functions/databaseCreation";
+import {
+  PATH_DB_FOLDER,
+  PATH_DB_FILE,
+  SETTINGS_OF_MAIN_WINDOW,
+  SETTINGS_OF_SETTINGS_WINDOW,
+} from "./constants";
 
 const isProd: boolean = process.env.NODE_ENV === "production";
 const port = process.argv[2];
 
 let mainWindow: BrowserWindow,
   settingsWindow: BrowserWindow,
-  settingsPageIsOpen: boolean = false;
+  settingsPageIsOpen: boolean = false,
+  db: any = null;
 
 (async () => {
   if (!fs.existsSync(PATH_DB_FOLDER)) {
@@ -28,12 +35,9 @@ const createSecondWindow = async () => {
   if (!settingsPageIsOpen) {
     try {
       settingsWindow = createWindow("settings", {
-        width: 800,
-        height: 600,
-        parent: mainWindow,
-        modal: true,
-        webPreferences: {
-          nodeIntegration: true,
+        ...SETTINGS_OF_SETTINGS_WINDOW,
+        ...{
+          parent: mainWindow,
         },
       });
 
@@ -42,8 +46,8 @@ const createSecondWindow = async () => {
       } else {
         await settingsWindow.loadURL(
           `http://localhost:${port}/settings/settings`
-          // settingsWindow.webContents.openDevTools();
         );
+        settingsWindow.webContents.openDevTools();
       }
 
       settingsWindow.on("close", (event) => {
@@ -68,6 +72,15 @@ const createSecondWindow = async () => {
         });
       });
 
+      // db.all("SELECT * FROM etapes", (err, rows) => {
+      //   if (err) {
+      //     console.error("Erreur lors de l'exécution de la requête :", err);
+      //     return;
+      //   }
+
+      //   console.log("Résultats de la requête :", rows);
+      // });
+
       settingsPageIsOpen = true;
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -78,25 +91,17 @@ const createSecondWindow = async () => {
 (async () => {
   await app.whenReady();
 
-  mainWindow = createWindow("main", {
-    width: 1000,
-    height: 600,
-    show: true,
-  });
+  mainWindow = createWindow("main", SETTINGS_OF_MAIN_WINDOW);
 
   if (isProd) {
     await mainWindow.loadURL("app://./overlay/overlay.html");
   } else {
     await mainWindow.loadURL(`http://localhost:${port}/overlay/overlay`);
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
-  const db = new sqlite3.Database(PATH_DB_FILE, (err) => {
-    if (err) {
-      console.error(err.message);
-      process.exit(1);
-    }
-    console.log("Connected to the SQLite database");
-  });
+
+  db = new sqlite3.Database(PATH_DB_FILE);
+  databaseCreation(db);
 })();
 
 app.on("ready", () => {
@@ -107,4 +112,16 @@ app.on("ready", () => {
 
 app.on("window-all-closed", () => {
   app.quit();
+});
+
+ipcMain.handle("db-query", async (event, sqlQuery) => {
+  return new Promise((resolve, reject) => {
+    db.all(sqlQuery, (err: any, rows: any) => {
+      if (err) {
+        reject(err.message);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
 });
