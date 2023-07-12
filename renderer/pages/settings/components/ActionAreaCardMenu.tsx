@@ -6,13 +6,18 @@ import Typography from "@mui/material/Typography";
 import { Button, CardActionArea } from "@mui/material";
 
 interface props {
-  title: string;
-  link: string;
-  toDo: any;
-  message?: string;
+  title: any;
+  link: any;
+  toDo?: any;
+  message?: any;
 }
 
-export default function ActionAreaCard({ title, link, toDo, message }: props) {
+export default function ActionAreaCardMenu({
+  title,
+  link,
+  toDo,
+  message,
+}: props) {
   return (
     <Card
       onClick={toDo}

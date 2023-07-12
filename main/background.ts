@@ -1,8 +1,9 @@
 import { BrowserWindow, app, dialog, ipcMain } from "electron";
 import serve from "electron-serve";
-import { createWindow } from "./helpers";
 import * as fs from "fs";
 import * as sqlite3 from "sqlite3";
+import path from "path";
+import { createWindow } from "./helpers";
 import { databaseCreation } from "./functions/databaseCreation";
 import {
   PATH_DB_FOLDER,
@@ -72,15 +73,6 @@ const createSecondWindow = async () => {
         });
       });
 
-      // db.all("SELECT * FROM etapes", (err, rows) => {
-      //   if (err) {
-      //     console.error("Erreur lors de l'exécution de la requête :", err);
-      //     return;
-      //   }
-
-      //   console.log("Résultats de la requête :", rows);
-      // });
-
       settingsPageIsOpen = true;
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -91,6 +83,17 @@ const createSecondWindow = async () => {
 (async () => {
   await app.whenReady();
 
+  db = new sqlite3.Database(PATH_DB_FILE, (err) => {
+    if (err) {
+      console.error(err.message);
+      process.exit(1);
+    }
+    console.log("Connected to the SQLite database");
+  });
+
+  db = new sqlite3.Database(PATH_DB_FILE);
+  databaseCreation(db);
+
   mainWindow = createWindow("main", SETTINGS_OF_MAIN_WINDOW);
 
   if (isProd) {
@@ -99,9 +102,6 @@ const createSecondWindow = async () => {
     await mainWindow.loadURL(`http://localhost:${port}/overlay/overlay`);
     mainWindow.webContents.openDevTools();
   }
-
-  db = new sqlite3.Database(PATH_DB_FILE);
-  databaseCreation(db);
 })();
 
 app.on("ready", () => {
@@ -123,5 +123,44 @@ ipcMain.handle("db-query", async (event, sqlQuery) => {
         resolve(rows);
       }
     });
+  });
+});
+
+ipcMain.handle("add-data-to-db", async (event, data: any) => {
+  return new Promise((resolve, reject) => {
+    const { title, playrace, versusrace } = data;
+    db.run(
+      "INSERT INTO build_order (title, playrace, versusrace ) VALUES (?, ?, ?);",
+      [title, playrace, versusrace],
+      function (err: any) {
+        if (err) {
+          reject(err.message);
+        } else {
+          console.log("title : " + title, playrace + " vs " + versusrace);
+          settingsWindow.webContents.send("data-added");
+          resolve({ success: true, message: "Data added successfully" });
+        }
+      }
+    );
+  });
+});
+
+ipcMain.handle("add-line-build-order-to-db", async (event, data: any) => {
+  return new Promise((resolve, reject) => {
+    const { timer, population, content, build_order_id } = data;
+    db.run(
+      "INSERT INTO etapes (timer, population,content,build_order_id  ) VALUES (?, ?,?,?);",
+      [timer, population, content, build_order_id],
+      function (err: any) {
+        if (err) {
+          console.log("fail");
+          reject(err.message);
+        } else {
+          console.log("succes");
+          settingsWindow.webContents.send("data-line-added");
+          resolve({ success: true, message: "Data added successfully" });
+        }
+      }
+    );
   });
 });
