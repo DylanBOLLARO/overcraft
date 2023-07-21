@@ -52,23 +52,23 @@ export default function BasicTable({ data, local }: props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((line: any, index: number) => (
+          {data?.map((line: any, index: number) => (
             <TableRow
               key={line.id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell align="left">{index + 1}</TableCell>
-              <TableCell align="left">{line.content}</TableCell>
-              <TableCell align="center">{line.population}</TableCell>
-              <TableCell align="center">{line.timer}</TableCell>
+              <TableCell align="left">{line?.content}</TableCell>
+              <TableCell align="center">{line?.population}</TableCell>
+              <TableCell align="center">{line?.timer}</TableCell>
               <TableCell align="center">OPTIONS</TableCell>
             </TableRow>
           ))}
           <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
             <TableCell align="left"></TableCell>
-            <TableCell align="left">{local.description}</TableCell>
-            <TableCell align="center">{local.population}</TableCell>
-            <TableCell align="center">{local.timer}</TableCell>
+            <TableCell align="left">{local?.description}</TableCell>
+            <TableCell align="center">{local?.population}</TableCell>
+            <TableCell align="center">{local?.timer}</TableCell>
             <TableCell align="center"></TableCell>
           </TableRow>
         </TableBody>
