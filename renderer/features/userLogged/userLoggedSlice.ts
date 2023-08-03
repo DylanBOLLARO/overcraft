@@ -1,19 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface userLoggedState {
-	value: number;
+	value: any;
 }
 
 const initialState: userLoggedState = {
-	value: 0,
+	value: null,
 };
 
 export const userLoggedSlice = createSlice({
 	name: "userLogged",
 	initialState,
 	reducers: {
-		refresh: (state) => {
-			state.value += 1;
+		refresh: (state, action) => {
+			state.value = action.payload;
 		},
 	},
 });

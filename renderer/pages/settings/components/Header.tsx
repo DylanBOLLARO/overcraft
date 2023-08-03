@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,17 +9,22 @@ import { CgMenuGridR } from "react-icons/cg";
 import { useRouter } from "next/router";
 import { TextField } from "@mui/material";
 import FormDialog from "./FormDialog";
-import { Counter } from "../../../features/counter/Counter";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import { refresh } from "../../../features/userLogged/userLoggedSlice";
+import SimpleSnackbar from "./CustomizedSnackbars";
 
 interface props {
 	title: string;
 }
 
 export default function Header({ title }: props) {
-	const count = useSelector((state: RootState) => state.userLogged.value);
 	const dispatch = useDispatch();
+
+	const userLogged = useSelector(
+		(state: RootState) => state.userLogged.value
+	);
+
 	const router = useRouter();
 	return (
 		<Box
@@ -63,7 +68,9 @@ export default function Header({ title }: props) {
 						component="div"
 						sx={{ flexGrow: 1 }}
 					>
-						Sc2-Build-Order-Ts
+						{userLogged
+							? "Bienvenue " + userLogged.user.username
+							: "Sc2-Build-Order-Ts"}
 					</Typography>
 					{title && (
 						<Typography
@@ -75,8 +82,20 @@ export default function Header({ title }: props) {
 						</Typography>
 					)}
 
-					<FormDialog />
-					<Counter />
+					{userLogged ? (
+						<Button
+							variant="outlined"
+							color="error"
+							onClick={() => {
+								dispatch(refresh(null));
+								router.push("/settings/settings");
+							}}
+						>
+							Logout
+						</Button>
+					) : (
+						<FormDialog />
+					)}
 				</Toolbar>
 			</AppBar>
 		</Box>

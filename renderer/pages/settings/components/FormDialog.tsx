@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -7,10 +7,12 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
+import { refresh } from "../../../features/userLogged/userLoggedSlice";
 
 export default function FormDialog() {
-	const [open, setOpen] = React.useState(false);
+	const dispatch = useDispatch();
 
+	const [open, setOpen] = useState(false);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
@@ -22,25 +24,20 @@ export default function FormDialog() {
 		setOpen(false);
 	};
 
-	const login = () => {
-		console.log(email + password);
-
-		async function getUser() {
-			try {
-				const response = await axios.post(
-					"http://127.0.0.1:3100/auth/signin",
-					{
-						email,
-						password,
-					}
-				);
-				console.log(response);
-			} catch (error) {
-				console.error(error);
-			}
+	const login = async () => {
+		try {
+			const response = await axios.post(
+				"http://127.0.0.1:3100/auth/signin",
+				{
+					email,
+					password,
+				}
+			);
+			dispatch(refresh(response.data));
+		} catch (error) {
+			console.error(error);
 		}
 
-		getUser();
 		setOpen(false);
 	};
 
