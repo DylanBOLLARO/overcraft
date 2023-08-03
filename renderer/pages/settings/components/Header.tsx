@@ -7,61 +7,78 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { CgMenuGridR } from "react-icons/cg";
 import { useRouter } from "next/router";
+import { TextField } from "@mui/material";
+import FormDialog from "./FormDialog";
+import { Counter } from "../../../features/counter/Counter";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 interface props {
-  title: string;
+	title: string;
 }
 
 export default function Header({ title }: props) {
-  const router = useRouter();
-  return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        zIndex: "100",
-      }}
-    >
-      <AppBar
-        position="static"
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          backgroundColor: "#18181b",
-        }}
-      >
-        <Toolbar
-          sx={{
-            width: "100%",
-            justifyContent: "space-between",
-          }}
-        >
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={() => {
-              router.push("/settings/settings");
-            }}
-          >
-            <CgMenuGridR />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Sc2-Build-Order-Ts
-          </Typography>
-          {title && (
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Name of build order : {title}
-            </Typography>
-          )}
-          <Button color="inherit">Login</Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
+	const count = useSelector((state: RootState) => state.userLogged.value);
+	const dispatch = useDispatch();
+	const router = useRouter();
+	return (
+		<Box
+			sx={{
+				flexGrow: 1,
+				position: "fixed",
+				top: 0,
+				left: 0,
+				width: "100%",
+				zIndex: "100",
+			}}
+		>
+			<AppBar
+				position="static"
+				sx={{
+					display: "flex",
+					flexDirection: "row",
+					backgroundColor: "#18181b",
+				}}
+			>
+				<Toolbar
+					sx={{
+						width: "100%",
+						justifyContent: "space-between",
+					}}
+				>
+					<IconButton
+						size="large"
+						edge="start"
+						color="inherit"
+						aria-label="menu"
+						sx={{ mr: 2 }}
+						onClick={() => {
+							router.push("/settings/settings");
+						}}
+					>
+						<CgMenuGridR />
+					</IconButton>
+					<Typography
+						variant="h6"
+						component="div"
+						sx={{ flexGrow: 1 }}
+					>
+						Sc2-Build-Order-Ts
+					</Typography>
+					{title && (
+						<Typography
+							variant="h6"
+							component="div"
+							sx={{ flexGrow: 1 }}
+						>
+							Name of build order : {title}
+						</Typography>
+					)}
+
+					<FormDialog />
+					<Counter />
+				</Toolbar>
+			</AppBar>
+		</Box>
+	);
 }
