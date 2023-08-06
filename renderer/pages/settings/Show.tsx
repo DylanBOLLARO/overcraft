@@ -40,12 +40,7 @@ function Show() {
 				/>
 			</div>
 			<div className="m-3 flex flex-wrap justify-center gap-5">
-				{data?.filter((race: any) => {
-					if (raceBuildDisplayed === 3) {
-						return true;
-					}
-					return race.playrace == raceBuildDisplayed;
-				}).length === 0 && (
+				{data?.length === 0 && (
 					<p className="text-2xl text-zinc-300">
 						There is no build order
 					</p>
