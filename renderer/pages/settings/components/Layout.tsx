@@ -60,7 +60,6 @@ export default function Layout({ children, title }: LayoutProps) {
 							Afin de pouvoir utiliser l'application, merci de
 							vous connecter !
 						</p>
-						<img src="/images/catloading.jpg" className="w-1/2" />
 					</main>
 				)}
 			</ThemeProvider>

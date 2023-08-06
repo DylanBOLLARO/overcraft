@@ -7,12 +7,11 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { CgMenuGridR } from "react-icons/cg";
 import { useRouter } from "next/router";
-import { TextField } from "@mui/material";
 import FormDialog from "./FormDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { refresh } from "../../../features/userLogged/userLoggedSlice";
-import SimpleSnackbar from "./CustomizedSnackbars";
+import BackgroundLetterAvatars from "./BackgroundLetterAvatars";
 
 interface props {
 	title: string;
@@ -26,6 +25,7 @@ export default function Header({ title }: props) {
 	);
 
 	const router = useRouter();
+
 	return (
 		<Box
 			sx={{
@@ -49,6 +49,7 @@ export default function Header({ title }: props) {
 					sx={{
 						width: "100%",
 						justifyContent: "space-between",
+						gap: "20px",
 					}}
 				>
 					<IconButton
@@ -63,6 +64,11 @@ export default function Header({ title }: props) {
 					>
 						<CgMenuGridR />
 					</IconButton>
+					{userLogged && (
+						<BackgroundLetterAvatars
+							pseudo={userLogged.user.username}
+						/>
+					)}
 					<Typography
 						variant="h6"
 						component="div"
@@ -72,6 +78,7 @@ export default function Header({ title }: props) {
 							? "Bienvenue " + userLogged.user.username
 							: "Sc2-Build-Order-Ts"}
 					</Typography>
+
 					{title && (
 						<Typography
 							variant="h6"
