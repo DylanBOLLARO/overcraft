@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { refresh } from "../../../features/userLogged/userLoggedSlice";
 import BackgroundLetterAvatars from "./BackgroundLetterAvatars";
+import { ipcRenderer } from "electron";
 
 interface props {
 	title: string;
@@ -88,7 +89,16 @@ export default function Header({ title }: props) {
 							Name of build order : {title}
 						</Typography>
 					)}
-
+					{userLogged && (
+						<button
+							className="p-3 rounded-lg"
+							onClick={() => {
+								ipcRenderer.invoke("create-settings-page");
+							}}
+						>
+							PLAY
+						</button>
+					)}
 					{userLogged ? (
 						<Button
 							variant="outlined"

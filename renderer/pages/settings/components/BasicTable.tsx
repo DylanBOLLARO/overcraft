@@ -6,23 +6,62 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import {
+	BsFillArrowUpSquareFill,
+	BsFillArrowDownSquareFill,
+	BsFillTrashFill,
+} from "react-icons/bs";
 
-function createData(
-	name: any,
-	calories: any,
-	fat: any,
-	carbs: any,
-	protein: any
-) {
-	return { name, calories, fat, carbs, protein };
-}
+import { AiFillEdit } from "react-icons/ai";
+import axios from "axios";
 
 interface props {
 	data: any;
 	local: any;
+	setRefreshLines: any;
+	buildId: any;
 }
 
-export default function BasicTable({ data, local }: props) {
+async function swapLineUp(id: number, buildId: number) {
+	try {
+		await axios.post("http://127.0.0.1:3100/build-order/swap-line-up", {
+			table: "buildStep",
+			id: "" + id,
+			buildId,
+		});
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+async function swapLineDown(id: number, buildId: number) {
+	try {
+		await axios.post("http://127.0.0.1:3100/build-order/swap-line-down", {
+			table: "buildStep",
+			id: "" + id,
+			buildId,
+		});
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+async function deleteLine(id: number) {
+	try {
+		await axios.post("http://127.0.0.1:3100/build-order/delete-line", {
+			id: "" + id,
+		});
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+export default function BasicTable({
+	data,
+	local,
+	setRefreshLines,
+	buildId,
+}: props) {
 	return (
 		<TableContainer component={Paper}>
 			<Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -44,31 +83,78 @@ export default function BasicTable({ data, local }: props) {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.map((line: any, index: number) => (
-						<TableRow
-							key={line.id}
-							sx={{
-								"&:last-child td, &:last-child th": {
-									border: 0,
-								},
-							}}
-						>
-							<TableCell align="left">{index + 1}</TableCell>
-							<TableCell align="left">{line?.desc}</TableCell>
-							<TableCell align="center">
-								{line?.population}
-							</TableCell>
-							<TableCell align="center">{line?.timer}</TableCell>
-							<TableCell align="center">OPTIONS</TableCell>
-						</TableRow>
-					))}
+					{data
+						?.sort((a: any, b: any) => a.id - b.id)
+						?.map((line: any, index: number) => (
+							<TableRow
+								key={line.id}
+								sx={{
+									"&:last-child td, &:last-child th": {
+										border: 0,
+									},
+								}}
+							>
+								<TableCell align="left">{index + 1}</TableCell>
+								<TableCell align="left">{line?.desc}</TableCell>
+								<TableCell align="center">
+									{line?.population}
+								</TableCell>
+								<TableCell align="center">
+									{line?.timer}
+								</TableCell>
+								<TableCell align="center">
+									<div className="flex flex-row justify-center gap-4 text-lg">
+										<button
+											className="hover:scale-110 duration-75"
+											onClick={async () => {}}
+										>
+											<AiFillEdit color="green" />{" "}
+										</button>
+										<button
+											className="hover:scale-110 duration-75"
+											onClick={async () => {
+												await swapLineUp(
+													line.id,
+													buildId
+												);
+												setRefreshLines(true);
+											}}
+										>
+											<BsFillArrowUpSquareFill color="#3a94ef" />
+										</button>
+										<button
+											className="hover:scale-110 duration-75"
+											onClick={async () => {
+												await swapLineDown(
+													line.id,
+													buildId
+												);
+												setRefreshLines(true);
+											}}
+										>
+											<BsFillArrowDownSquareFill color="#e5c07b" />{" "}
+										</button>
+
+										<button
+											className="hover:scale-110 duration-75"
+											onClick={async () => {
+												await deleteLine(line.id);
+												setRefreshLines(true);
+											}}
+										>
+											<BsFillTrashFill color="red" />{" "}
+										</button>
+									</div>
+								</TableCell>
+							</TableRow>
+						))}
 					<TableRow
 						sx={{
 							"&:last-child td, &:last-child th": { border: 0 },
 						}}
 					>
 						<TableCell align="left"></TableCell>
-						<TableCell align="left">{local?.desc}</TableCell>
+						<TableCell align="left">{local?.description}</TableCell>
 						<TableCell align="center">
 							{local?.population}
 						</TableCell>

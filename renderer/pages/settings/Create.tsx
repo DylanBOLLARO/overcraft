@@ -65,16 +65,16 @@ const CreateNewBuildOrder = () => {
 							User_id: "" + userLogged.user.id,
 						}
 					);
+
+					router.push({
+						pathname: "/settings/Show",
+						query: {},
+					});
 				} catch (error) {
 					console.error(error);
 				}
 			})();
 		}
-
-		router.push({
-			pathname: "/settings/Show",
-			query: {},
-		});
 	}
 
 	return (

@@ -4,26 +4,37 @@ import Layout from "../settings/components/Layout";
 import BasicTable from "./components/BasicTable";
 import { Button, TextField } from "@mui/material";
 import axios from "axios";
+import FormDelete from "./components/FormDelete";
 
 function Modify() {
 	const router = useRouter();
 	const { query } = useRouter();
 
+	const [refreshLines, setRefreshLines] = useState(false);
 	useEffect(() => {
-		(async () => {
-			try {
-				const response = await axios.post(
-					"http://127.0.0.1:3100/build-order/get-all-lines",
-					{
-						id: query.idBuild,
-					}
-				);
-				console.error(response.data);
-				setData(response.data);
-			} catch (error) {
-				console.error(error);
-			}
-		})();
+		if (refreshLines) {
+			getAllLines();
+			setRefreshLines(false);
+		}
+	}, [refreshLines]);
+
+	async function getAllLines() {
+		try {
+			const response = await axios.post(
+				"http://127.0.0.1:3100/build-order/get-all-lines",
+				{
+					id: query.idBuild,
+				}
+			);
+			console.error(response.data);
+			setData(response.data);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	useEffect(() => {
+		getAllLines();
 	}, []);
 
 	interface interfaceLocalBuildOrder {
@@ -66,29 +77,17 @@ function Modify() {
 							Back
 						</Button>
 						<div className="flex gap-5">
-							<Button
+							{/* <Button
 								sx={{ width: "200px" }}
 								color="error"
 								variant="outlined"
-								onClick={async () => {
-									try {
-										await axios.post(
-											"http://127.0.0.1:3100/build-order/delete-build",
-											{
-												id: "" + query.idBuild,
-											}
-										);
-									} catch (error) {
-										console.error(error);
-									}
-
-									router.push({
-										pathname: "/settings/Show",
-									});
+								onClick={() => {
+									validationDelete(query.idBuild, query.name);
 								}}
 							>
 								Delete
-							</Button>
+							</Button> */}
+							<FormDelete id={query.idBuild} name={query.name} />
 							<Button
 								sx={{ width: "200px" }}
 								variant="outlined"
@@ -99,7 +98,12 @@ function Modify() {
 							</Button>
 						</div>
 					</div>
-					<BasicTable data={data} local={localBuildOrder} />
+					<BasicTable
+						data={data}
+						local={localBuildOrder}
+						setRefreshLines={setRefreshLines}
+						buildId={query.idBuild}
+					/>
 					<div className="flex flex-row justify-between">
 						<TextField
 							id="Description-basic"
@@ -147,20 +151,7 @@ function Modify() {
 									console.error(error);
 								}
 
-								(async () => {
-									try {
-										const response = await axios.post(
-											"http://127.0.0.1:3100/build-order/get-all-lines",
-											{
-												id: query.idBuild,
-											}
-										);
-										console.error(response.data);
-										setData(response.data);
-									} catch (error) {
-										console.error(error);
-									}
-								})();
+								getAllLines();
 							}}
 						>
 							Save line

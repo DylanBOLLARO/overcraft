@@ -14,9 +14,13 @@ export default function FormDialog() {
 
 	const [open, setOpen] = useState(false);
 	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
+
 	const [password, setPassword] = useState("");
+	const [createAccount, setCreateAccount] = useState(false);
 
 	const handleClickOpen = () => {
+		setCreateAccount(false);
 		setOpen(true);
 	};
 
@@ -24,21 +28,42 @@ export default function FormDialog() {
 		setOpen(false);
 	};
 
-	const login = async () => {
-		try {
-			const response = await axios.post(
-				"http://127.0.0.1:3100/auth/signin",
-				{
+	const handleCreateAccount = () => {
+		setCreateAccount(!createAccount);
+	};
+
+	const handleSubmite = async () => {
+		if (createAccount) {
+			console.log("Create Account");
+
+			try {
+				await axios.post("http://127.0.0.1:3100/auth/signup", {
 					email,
 					password,
-				}
-			);
-			dispatch(refresh(response.data));
-		} catch (error) {
-			console.error(error);
-		}
+					username,
+				});
+			} catch (error) {
+				console.error(error);
+			}
 
-		setOpen(false);
+			setOpen(false);
+		} else {
+			console.log("Log to Account");
+
+			try {
+				const response = await axios.post(
+					"http://127.0.0.1:3100/auth/signin",
+					{
+						email,
+						password,
+					}
+				);
+				dispatch(refresh(response.data));
+			} catch (error) {
+				console.error(error);
+			}
+			setOpen(false);
+		}
 	};
 
 	return (
@@ -47,38 +72,51 @@ export default function FormDialog() {
 				Login
 			</Button>
 			<Dialog open={open} onClose={handleClose}>
-				<DialogTitle>Login</DialogTitle>
+				<DialogTitle>
+					{createAccount ? "Create account" : "Login"}
+				</DialogTitle>
 				<DialogContent>
+					{createAccount && (
+						<TextField
+							margin="dense"
+							id="username"
+							label="Username"
+							fullWidth
+							onChange={(e) => {
+								setUsername(e.target.value);
+							}}
+						/>
+					)}
 					<TextField
 						autoFocus
 						margin="dense"
 						id="email"
 						label="Email"
-						type="email"
 						fullWidth
-						variant="standard"
 						onChange={(e) => {
 							setEmail(e.target.value);
 						}}
 					/>
+
 					<TextField
 						margin="dense"
 						id="password"
 						label="Password"
 						type="password"
 						fullWidth
-						variant="standard"
 						onChange={(e) => {
 							setPassword(e.target.value);
 						}}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button disabled onClick={handleClose}>
-						Create account
+					<Button onClick={handleCreateAccount}>
+						{!createAccount ? "Create account" : "Login"}
 					</Button>
 					<Button onClick={handleClose}>Cancel</Button>
-					<Button onClick={login}>Login</Button>
+					<Button onClick={handleSubmite}>
+						{createAccount ? "Create" : "Login"}
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
