@@ -2,21 +2,20 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { ipcRenderer } from "electron";
 import Layout from "./components/Layout";
-import { colorName } from "../../constants/main";
 import { TbSquareRounded, TbSquareRoundedFilled } from "react-icons/tb";
 import axios from "axios";
-import { useSelector } from "react-redux";
 
 export default function ProductScreen() {
-  const userLogged = useSelector(
-		(state) => state.userLogged.value
-	);
 
-  console.log(userLogged);
+
+
   const { query } = useRouter();
   const router = useRouter();
 
   const [selectedBuild, setSelectedBuild] = useState(0);
+  const [data, setData] = useState([]);
+	const [first, setfirst] = useState("");
+  const [buildStep, setBuildStep] = useState(null)
 
   const incCounter = () => {
     setSelectedBuild((prevCounter) => prevCounter + 1);
@@ -26,8 +25,7 @@ export default function ProductScreen() {
     setSelectedBuild((prevCounter) => prevCounter - 1);
   };
 
-  const [data, setData] = useState([]);
-	const [first, setfirst] = useState("");
+
 
 useEffect(() => {
   ipcRenderer.send("send-variable-to-main", 156328);
@@ -40,7 +38,6 @@ useEffect(() => {
 
 
   useEffect(() => {
-
     (async () => {      
 			try {
 				const response = await axios.post(
@@ -56,34 +53,26 @@ useEffect(() => {
 			}
 		})();
 
-
-  }, [selectedBuild,first]);
+  }, [first]);
 
   useEffect(() => {
     ipcRenderer.on("num7", () => {
       decCounter();
     });
 
-    ipcRenderer.on("num8", async () => {
-      const newData = await ipcRenderer.invoke(
-        "db-query",
-        `SELECT build_order.* FROM build_order JOIN categories ON build_order.category_id = categories.id WHERE categories.title = '${
-          query.racePlayed + "v" + query.raceOpponent
-        }';`
-      );
-
-      console.log("newData[selectedBuild].id : " + newData[selectedBuild].id);
-
-      router.push({
-        pathname: "/play/DisplayBuild",
-        query: {
-          racePlayed: query.racePlayed,
-          raceOpponent: query.raceOpponent,
-
-          build: newData[selectedBuild].id,
-        },
+      ipcRenderer.on("num8", async () => {
+        console.log("first : " + first);
+        console.log("data[selectedBuild].id : " + data[selectedBuild].id);
+  
+        if(data){
+          router.push({
+            pathname: "/play/DisplayBuild",
+            query: {
+              build: data[selectedBuild]?.id,
+            },
+          });
+        }
       });
-    });
 
     ipcRenderer.on("num9", () => {
       incCounter();
@@ -102,7 +91,9 @@ useEffect(() => {
       ipcRenderer.removeAllListeners("num9");
       ipcRenderer.removeAllListeners("num5");
     };
-  }, [selectedBuild]);
+  }, [selectedBuild, first, data]);
+
+
 
   return (
     <Layout title={`Select your build order`}>

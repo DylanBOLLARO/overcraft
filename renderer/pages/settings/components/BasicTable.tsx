@@ -55,6 +55,13 @@ async function deleteLine(id: number) {
 		console.error(error);
 	}
 }
+const formatTemps = (temps) => {
+	const minutes = Math.floor(temps / 60);
+	const secondes = temps % 60;
+	return `${minutes.toString().padStart(2, "0")}:${secondes
+		.toString()
+		.padStart(2, "0")}`;
+};
 
 export default function BasicTable({
 	data,
@@ -100,7 +107,7 @@ export default function BasicTable({
 									{line?.population}
 								</TableCell>
 								<TableCell align="center">
-									{line?.timer}
+									{formatTemps(line?.timer)}
 								</TableCell>
 								<TableCell align="center">
 									<div className="flex flex-row justify-center gap-4 text-lg">
@@ -158,7 +165,9 @@ export default function BasicTable({
 						<TableCell align="center">
 							{local?.population}
 						</TableCell>
-						<TableCell align="center">{local?.timer}</TableCell>
+						<TableCell align="center">
+							{formatTemps(local?.timer)}
+						</TableCell>
 						<TableCell align="center"></TableCell>
 					</TableRow>
 				</TableBody>

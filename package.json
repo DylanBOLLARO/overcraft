@@ -24,14 +24,11 @@
     "pg": "^8.11.1",
     "react-icons": "^4.10.1",
     "react-redux": "^8.1.2",
-    "redux-persist": "^6.0.0",
-    "redux-state-sync": "^3.1.4",
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
-    "@types/redux-state-sync": "^3.1.5",
     "autoprefixer": "^10.4.14",
     "electron": "^21.3.3",
     "electron-builder": "^23.6.0",

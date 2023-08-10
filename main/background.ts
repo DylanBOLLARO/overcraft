@@ -71,7 +71,7 @@ const createSecondWindow = async () => {
 		await mainWindow.loadURL("app://./settings/settings.html");
 	} else {
 		await mainWindow.loadURL(`http://localhost:${port}/settings/settings`);
-		mainWindow.webContents.openDevTools();
+		// mainWindow.webContents.openDevTools();
 	}
 })();
 

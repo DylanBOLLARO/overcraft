@@ -52,7 +52,7 @@ export default function Layout({ title, children }) {
           )}
         </header>
         <main className="my-3">{children}</main>
-        {pathname === "/DisplayBuild" && (
+        {pathname === "/play/DisplayBuild" && (
           <Chronometre demarrerChronometre={demarrerChronometre} />
         )}
       </div>

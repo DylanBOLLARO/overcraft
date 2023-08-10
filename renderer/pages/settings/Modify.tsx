@@ -6,17 +6,51 @@ import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import FormDelete from "./components/FormDelete";
 
+interface interfaceLocalBuildOrder {
+	timer: number | null;
+	population: number | null;
+	description: string | null;
+	build_order_id: any;
+}
+
 function Modify() {
 	const router = useRouter();
 	const { query } = useRouter();
 
 	const [refreshLines, setRefreshLines] = useState(false);
+	const [timer, setTimer] = useState({
+		minutes: 0,
+		seconds: 0,
+	});
+
+	const handleMinutesChange = (e: any) => {
+		setTimer((prevTimer) => ({
+			...prevTimer,
+			minutes: parseInt(e.target.value),
+		}));
+	};
+
+	const handleSecondsChange = (e: any) => {
+		setTimer((prevTimer) => ({
+			...prevTimer,
+			seconds: parseInt(e.target.value),
+		}));
+	};
+
+	const convertToSeconds = () => {
+		return timer.minutes * 60 + timer.seconds;
+	};
+
 	useEffect(() => {
 		if (refreshLines) {
 			getAllLines();
 			setRefreshLines(false);
 		}
 	}, [refreshLines]);
+
+	useEffect(() => {
+		updateLocalBuild("timer", convertToSeconds());
+	}, [timer]);
 
 	async function getAllLines() {
 		try {
@@ -37,17 +71,10 @@ function Modify() {
 		getAllLines();
 	}, []);
 
-	interface interfaceLocalBuildOrder {
-		timer: number | null;
-		population: number | null;
-		description: string | null;
-		build_order_id: any;
-	}
-
 	const [data, setData] = useState([]);
 	const [localBuildOrder, setLocalBuildOrder] =
 		useState<interfaceLocalBuildOrder>({
-			timer: null,
+			timer: convertToSeconds(),
 			population: null,
 			description: null,
 			build_order_id: query.idBuild,
@@ -77,16 +104,6 @@ function Modify() {
 							Back
 						</Button>
 						<div className="flex gap-5">
-							{/* <Button
-								sx={{ width: "200px" }}
-								color="error"
-								variant="outlined"
-								onClick={() => {
-									validationDelete(query.idBuild, query.name);
-								}}
-							>
-								Delete
-							</Button> */}
 							<FormDelete id={query.idBuild} name={query.name} />
 							<Button
 								sx={{ width: "200px" }}
@@ -121,14 +138,21 @@ function Modify() {
 								updateLocalBuild("population", e.target.value);
 							}}
 						/>
-						<TextField
-							id="Timer-basic"
-							label="Timer"
-							variant="outlined"
-							onChange={(e) => {
-								updateLocalBuild("timer", e.target.value);
-							}}
-						/>
+						<div className="flex flex-row justify-center text-zinc-300 gap-5">
+							<p>Timer : </p>
+							<TextField
+								id="Timer-basic-m"
+								label="Minutes"
+								variant="outlined"
+								onChange={(e) => handleMinutesChange(e)}
+							/>
+							<TextField
+								id="Timer-basic-s"
+								label="Secondes"
+								variant="outlined"
+								onChange={(e) => handleSecondsChange(e)}
+							/>
+						</div>
 
 						<Button
 							variant="outlined"
