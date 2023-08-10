@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import CustomizedSnackbars from "./CustomizedSnackbars";
 import { useEffect, useState } from "react";
+import { ipcRenderer } from "electron";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -15,6 +16,19 @@ export default function Layout({ children, title }: LayoutProps) {
 	const userLogged = useSelector(
 		(state: RootState) => state.userLogged.value
 	);
+
+	useEffect(() => {
+		ipcRenderer.send("get-variable-value");
+
+		ipcRenderer.on("variable-value-from-main", (event, variableValue) => {
+			console.log(userLogged);
+
+			ipcRenderer.send(
+				"send-variable-to-play",
+				userLogged && userLogged.user.id
+			);
+		});
+	}, [userLogged]);
 
 	const [open, setOpen] = useState(true);
 	const [message, setMessage] = useState("");

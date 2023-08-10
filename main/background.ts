@@ -79,6 +79,22 @@ app.on("ready", () => {
 	ipcMain.handle("create-settings-page", async (event) => {
 		createSecondWindow();
 	});
+
+	ipcMain.on("send-variable-to-main", (event, variableValue) => {
+		console.log(
+			"Valeur de la variable reçue dans le processus principal:",
+			variableValue
+		);
+		mainWindow.webContents.send("variable-value-from-main", variableValue);
+	});
+
+	ipcMain.on("send-variable-to-play", (event, variableValue) => {
+		console.log(
+			"Valeur de la variable reçue dans le processus principal:",
+			variableValue
+		);
+		playWindow.webContents.send("variable-value-from-main", variableValue);
+	});
 });
 
 app.on("window-all-closed", () => {

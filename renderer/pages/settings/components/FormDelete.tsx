@@ -10,8 +10,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 
 interface props {
-	id: number;
-	name: number;
+	id: any;
+	name: any;
 }
 
 export default function FormDelete({ id, name }: props) {

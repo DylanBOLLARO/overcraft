@@ -7,11 +7,8 @@ import Layout from "./components/Layout";
 
 function Home() {
 	const router = useRouter();
-
 	useEffect(() => {
 		ipcRenderer.on("num7", () => {
-			console.log("touch n7");
-
 			router.push({
 				pathname: "/play/OpponentRace",
 				query: { racePlayed: "t" },
@@ -65,12 +62,14 @@ function Home() {
 							src={`/images/${category.name}Logo.png`}
 							width={32}
 							height={32}
+							alt={category.name}
 						/>
 						<div className="absolute -z-10 opacity-25 blur-lg">
 							<Image
 								src={`/images/${category.name}Logo.png`}
 								width={128}
 								height={128}
+								alt={category.name}
 							/>
 						</div>
 					</div>

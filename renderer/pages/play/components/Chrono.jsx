@@ -4,7 +4,7 @@ import { incrementByAmount, reset } from "../../../features/counterSlice/counter
 import { ipcRenderer } from "electron";
 
 function Chronometre() {
-  const count = useSelector((state) => state.counter.value);
+  const count = useSelector((state) => state?.counter?.value);
 
   const [enCours, setEnCours] = useState(false);
   const intervalRef = useRef(null);

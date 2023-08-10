@@ -7,7 +7,7 @@ import { ipcRenderer } from "electron";
 function DisplayBuild() {
   const router = useRouter();
   const { query } = useRouter();
-  const count = useSelector((state) => state.counter.value);
+  const count = useSelector((state) => state?.counter?.value);
 
 
 
@@ -78,14 +78,14 @@ function DisplayBuild() {
     <Layout title={"path.name"}>
       <div className={`flex flex-col gap-1`}>
         {data
-          .slice(
+          ?.slice(
             Math.max(data.filter((x) => count > x.timer).length - 2, 0),
             Math.min(
               data.filter((x) => count > x.timer).length + 6,
               data.length
             )
           )
-          .map((u, index) => (
+          ?.map((u, index) => (
             <div className="rounded bg-black/50">
               {u.details && (
                 <div className="flex w-full flex-row px-3 py-1 text-[#a878dd]">

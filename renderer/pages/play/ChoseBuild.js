@@ -27,16 +27,26 @@ export default function ProductScreen() {
   };
 
   const [data, setData] = useState([]);
+	const [first, setfirst] = useState("");
+
+useEffect(() => {
+  ipcRenderer.send("send-variable-to-main", 156328);
+
+  ipcRenderer.on("variable-value-from-main", (event, variableValue) => {
+    setfirst(variableValue);
+
+ });
+}, [first])
+
 
   useEffect(() => {
-    console.log(`${query.racePlayed + "v" + query.raceOpponent}`);
 
-    (async () => {
+    (async () => {      
 			try {
 				const response = await axios.post(
 					"http://127.0.0.1:3100/build-order/get-all-build",
 					{
-						id: "" + userLogged.user.id,
+						id: "" + first,
 					}
 				);
         console.log(response.data);
@@ -47,24 +57,7 @@ export default function ProductScreen() {
 		})();
 
 
-    // (async () => {
-    //   try {
-    //     const newData = await ipcRenderer.invoke(
-    //       "db-query",
-    //       `SELECT build_order.* FROM build_order JOIN categories ON build_order.category_id = categories.id WHERE categories.title = '${
-    //         query.racePlayed + "v" + query.raceOpponent
-    //       }';`
-    //     );
-
-    //     console.log("data from database : " + JSON.stringify(newData));
-    //     console.log("data INCORPORATION : " + JSON.stringify(data));
-
-    //     setData(newData);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // })();
-  }, [selectedBuild]);
+  }, [selectedBuild,first]);
 
   useEffect(() => {
     ipcRenderer.on("num7", () => {
