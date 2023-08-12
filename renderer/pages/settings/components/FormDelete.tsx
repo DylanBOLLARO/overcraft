@@ -8,6 +8,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { deleteBuild } from "../../../actions/actioncreators/buildOrder";
 
 interface props {
 	id: any;
@@ -31,22 +32,11 @@ export default function FormDelete({ id, name }: props) {
 	async function validationDelete(idOfBuild: any, title: any) {
 		if (title === textInput) {
 			await deleteBuild(idOfBuild);
+			router.push({
+				pathname: "/settings/Show",
+			});
 			handleClose();
 		}
-	}
-
-	async function deleteBuild(idOfBuild: any) {
-		try {
-			await axios.post("http://127.0.0.1:3100/build-order/delete-build", {
-				id: "" + idOfBuild,
-			});
-		} catch (error) {
-			console.error(error);
-		}
-
-		router.push({
-			pathname: "/settings/Show",
-		});
 	}
 
 	return (

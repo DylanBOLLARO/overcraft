@@ -5,6 +5,7 @@ import ActionAreaCardMenu from "./components/ActionAreaCardMenu";
 
 function Settings() {
 	const router = useRouter();
+	console.log(process.env.SUPERYETI_API);
 
 	return (
 		<Layout>

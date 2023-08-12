@@ -3,26 +3,21 @@ import { useRouter } from "next/router";
 import Layout from "./components/Layout";
 import { useSelector } from "react-redux";
 import { ipcRenderer } from "electron";
-import axios from "axios";
+import { getAllLines } from "../../actions/actioncreators/buildOrder";
 
 function DisplayBuild() {
 	const router = useRouter();
 	const { query } = useRouter();
 	const count = useSelector((state) => state?.counter?.value);
+	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		console.log(data);
+	}, [data]);
 
 	useEffect(() => {
 		(async () => {
-			try {
-				const response = await axios.post(
-					"http://127.0.0.1:3100/build-order/get-all-lines",
-					{
-						id: "" + query.build,
-					}
-				);
-				setData(response.data);
-			} catch (error) {
-				console.error(error);
-			}
+			setData(await getAllLines(query.build));
 		})();
 	}, []);
 
@@ -42,7 +37,6 @@ function DisplayBuild() {
 			ipcRenderer.removeAllListeners("num5");
 		};
 	}, []);
-	const [data, setData] = useState([]);
 
 	const formatTemps = (temps) => {
 		const minutes = Math.floor(temps / 60);

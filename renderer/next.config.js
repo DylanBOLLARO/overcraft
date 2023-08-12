@@ -1,12 +1,15 @@
 module.exports = {
-  images: {
-    unoptimized: true,
-  },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.target = 'electron-renderer';
-    }
+	images: {
+		unoptimized: true,
+	},
+	env: {
+		SUPERYETI_API: process.env.SUPERYETI_API,
+	},
+	webpack: (config, { isServer }) => {
+		if (!isServer) {
+			config.target = "electron-renderer";
+		}
 
-    return config;
-  },
+		return config;
+	},
 };

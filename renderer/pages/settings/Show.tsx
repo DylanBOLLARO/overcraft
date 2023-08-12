@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import Layout from "./components/Layout";
 import BasicSelect from "./components/BasicSelect";
 import ActionAreaCardBuild from "./components/ActionAreaCardBuild";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
+import { getAllBuild } from "../../actions/actioncreators/buildOrder";
 
 function Show() {
 	const userLogged = useSelector(
@@ -12,22 +12,13 @@ function Show() {
 	);
 
 	const [data, setData] = useState([]);
-
 	const [raceBuildDisplayed, setRaceBuildDisplayed] = useState(3);
 
 	useEffect(() => {
 		(async () => {
-			try {
-				const response = await axios.post(
-					"http://127.0.0.1:3100/build-order/get-all-build",
-					{
-						id: "" + userLogged.user.id,
-					}
-				);
-				setData(response.data);
-			} catch (error) {
-				console.error(error);
-			}
+			console.log(await getAllBuild(userLogged.user.id));
+
+			setData(await getAllBuild(userLogged.user.id));
 		})();
 	}, []);
 

@@ -27,12 +27,12 @@ const createSecondWindow = async () => {
 			});
 
 			playWindow.setAlwaysOnTop(true);
-			// playWindow.setIgnoreMouseEvents(true);
+			playWindow.setIgnoreMouseEvents(true);
 			if (isProd) {
 				await playWindow.loadURL("app://./play/play.html");
 			} else {
 				await playWindow.loadURL(`http://localhost:${port}/play/play`);
-				playWindow.webContents.openDevTools();
+				// playWindow.webContents.openDevTools();
 			}
 
 			playWindowIsOpen = true;

@@ -4,8 +4,8 @@ import { Box, Button, TextField } from "@mui/material";
 import ToggleButtons from "../settings/components/ToggleButtons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import axios from "axios";
 import { useRouter } from "next/router";
+import { newBuild } from "../../actions/actioncreators/buildOrder";
 
 const CreateNewBuildOrder = () => {
 	const router = useRouter();
@@ -54,25 +54,16 @@ const CreateNewBuildOrder = () => {
 	function handleFormSubmit(params: any) {
 		if (checkingFieldsOfBuild(params)) {
 			(async () => {
-				try {
-					await axios.post(
-						"http://127.0.0.1:3100/build-order/new-build",
-						{
-							title: "" + params.title,
-							desc: "desc",
-							playrace: "" + params.playrace,
-							versusrace: "" + params.versusrace,
-							User_id: "" + userLogged.user.id,
-						}
-					);
-
-					router.push({
-						pathname: "/settings/Show",
-						query: {},
-					});
-				} catch (error) {
-					console.error(error);
-				}
+				await newBuild(
+					params.title,
+					params.playrace,
+					params.versusrace,
+					userLogged.user.id
+				);
+				router.push({
+					pathname: "/settings/Show",
+					query: {},
+				});
 			})();
 		}
 	}

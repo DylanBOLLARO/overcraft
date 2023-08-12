@@ -6,8 +6,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import axios from "axios";
 import { refresh } from "../../../features/userLogged/userLoggedSlice";
+import { signin, signup } from "../../../actions/actioncreators/buildOrder";
 
 export default function FormDialog() {
 	const dispatch = useDispatch();
@@ -34,34 +34,13 @@ export default function FormDialog() {
 
 	const handleSubmite = async () => {
 		if (createAccount) {
-			console.log("Create Account");
-
-			try {
-				await axios.post("http://127.0.0.1:3100/auth/signup", {
-					email,
-					password,
-					username,
-				});
-			} catch (error) {
-				console.error(error);
-			}
-
+			signup(email, password, username);
 			setOpen(false);
 		} else {
 			console.log("Log to Account");
 
-			try {
-				const response = await axios.post(
-					"http://127.0.0.1:3100/auth/signin",
-					{
-						email,
-						password,
-					}
-				);
-				dispatch(refresh(response.data));
-			} catch (error) {
-				console.error(error);
-			}
+			dispatch(refresh(await signin(email, password)));
+
 			setOpen(false);
 		}
 	};

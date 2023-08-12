@@ -14,6 +14,11 @@ import {
 
 import { AiFillEdit } from "react-icons/ai";
 import axios from "axios";
+import {
+	deleteLine,
+	swapLineDown,
+	swapLineUp,
+} from "../../../actions/actioncreators/buildOrder";
 
 interface props {
 	data: any;
@@ -22,40 +27,7 @@ interface props {
 	buildId: any;
 }
 
-async function swapLineUp(id: number, buildId: number) {
-	try {
-		await axios.post("http://127.0.0.1:3100/build-order/swap-line-up", {
-			table: "buildStep",
-			id: "" + id,
-			buildId,
-		});
-	} catch (error) {
-		console.error(error);
-	}
-}
-
-async function swapLineDown(id: number, buildId: number) {
-	try {
-		await axios.post("http://127.0.0.1:3100/build-order/swap-line-down", {
-			table: "buildStep",
-			id: "" + id,
-			buildId,
-		});
-	} catch (error) {
-		console.error(error);
-	}
-}
-
-async function deleteLine(id: number) {
-	try {
-		await axios.post("http://127.0.0.1:3100/build-order/delete-line", {
-			id: "" + id,
-		});
-	} catch (error) {
-		console.error(error);
-	}
-}
-const formatTemps = (temps) => {
+const formatTemps = (temps: number) => {
 	const minutes = Math.floor(temps / 60);
 	const secondes = temps % 60;
 	return `${minutes.toString().padStart(2, "0")}:${secondes

@@ -5,6 +5,7 @@ import BasicTable from "./components/BasicTable";
 import { Button, TextField } from "@mui/material";
 import axios from "axios";
 import FormDelete from "./components/FormDelete";
+import { addLine, getAllLines } from "../../actions/actioncreators/buildOrder";
 
 interface interfaceLocalBuildOrder {
 	timer: number | null;
@@ -43,7 +44,7 @@ function Modify() {
 
 	useEffect(() => {
 		if (refreshLines) {
-			getAllLines();
+			getAllLinesLocal();
 			setRefreshLines(false);
 		}
 	}, [refreshLines]);
@@ -52,23 +53,12 @@ function Modify() {
 		updateLocalBuild("timer", convertToSeconds());
 	}, [timer]);
 
-	async function getAllLines() {
-		try {
-			const response = await axios.post(
-				"http://127.0.0.1:3100/build-order/get-all-lines",
-				{
-					id: query.idBuild,
-				}
-			);
-			console.error(response.data);
-			setData(response.data);
-		} catch (error) {
-			console.error(error);
-		}
+	async function getAllLinesLocal() {
+		setData(await getAllLines(query.idBuild));
 	}
 
 	useEffect(() => {
-		getAllLines();
+		getAllLinesLocal();
 	}, []);
 
 	const [data, setData] = useState([]);
@@ -158,24 +148,14 @@ function Modify() {
 							variant="outlined"
 							color="secondary"
 							onClick={async () => {
-								try {
-									await axios.post(
-										"http://127.0.0.1:3100/build-order/add-line",
-										{
-											desc: localBuildOrder.description,
-											population:
-												"" + localBuildOrder.population,
-											timer: "" + localBuildOrder.timer,
-											buildName_id:
-												"" +
-												localBuildOrder.build_order_id,
-										}
-									);
-								} catch (error) {
-									console.error(error);
-								}
+								await addLine(
+									localBuildOrder.description,
+									localBuildOrder.population,
+									localBuildOrder.timer,
+									localBuildOrder.build_order_id
+								);
 
-								getAllLines();
+								getAllLinesLocal();
 							}}
 						>
 							Save line
