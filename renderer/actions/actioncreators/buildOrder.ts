@@ -14,15 +14,17 @@ async function getAllBuild(id: number) {
 	}
 }
 
-async function signup(email: string, password: string, username: string) {
+async function signup(username: string, email: string, password: string) {
 	try {
-		await axios.post(`http://${process.env.SUPERYETI_API}/auth/signup`, {
+		const response = await axios.post(`http://${process.env.SUPERYETI_API}/auth/signup`, {
+			username,
 			email,
 			password,
-			username,
 		});
+		return response;
 	} catch (error) {
 		console.error(error);
+		return null;
 	}
 }
 
@@ -35,10 +37,10 @@ async function signin(email: string, password: string) {
 				password,
 			}
 		);
-		console.log(JSON.stringify(response.data));
-		return response.data;
+		return response;
 	} catch (error) {
 		console.error(error);
+		return null;
 	}
 }
 

@@ -16,12 +16,20 @@ import {
 	MenubarTrigger,
 } from "../../ui/menubar";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { refresh } from "../../../features/userLogged/userLoggedSlice";
+import { RootState } from "../../../store";
 
 export function Menu() {
+	const dispatch = useDispatch();
+	const userLogged = useSelector(
+		(state: RootState) => state.userLogged.value,
+	);
 	const handleQuitClick = () => {
 		// Send a message to the main process when the item is clicked
 		ipcRenderer.send("quit-app");
 	};
+	console.log(userLogged);
 	return (
 		<Menubar className="rounded-none border-b border-none px-2 lg:px-4">
 			<MenubarMenu>
@@ -40,6 +48,19 @@ export function Menu() {
 						Hide Others... <MenubarShortcut>⇧⌘H</MenubarShortcut>
 					</MenubarItem>
 					<MenubarShortcut /> */}
+					<MenubarLabel>
+						{userLogged && userLogged.user.email}
+					</MenubarLabel>
+					<MenubarSeparator />
+
+					<MenubarItem
+						onClick={() => {
+							dispatch(refresh(null));
+						}}
+					>
+						Sign out
+					</MenubarItem>
+					<MenubarSeparator />
 					<MenubarItem
 						className="text-destructive"
 						onClick={handleQuitClick}
@@ -214,6 +235,9 @@ export function Menu() {
 					<MenubarItem inset>Add Account...</MenubarItem>
 				</MenubarContent>
 			</MenubarMenu> */}
+			<p className="pl-10">
+				Welcome {userLogged && userLogged.user.username}
+			</p>
 		</Menubar>
 	);
 }

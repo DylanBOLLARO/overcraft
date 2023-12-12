@@ -1,4 +1,3 @@
-import { Button } from "./ui/button";
 import {
 	Card,
 	CardContent,
@@ -9,8 +8,11 @@ import {
 } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { useDispatch } from "react-redux";
+import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -24,29 +26,75 @@ import {
 	FormLabel,
 	FormMessage,
 } from "./ui/form";
+import { signin, signup } from "../actions/actioncreators/buildOrder";
+import { refresh } from "../features/userLogged/userLoggedSlice";
 
-export default function AuthenticationPage() {
+export default function AuthenticationPage({ setAlert, setAlertData }: any) {
 	const dispatch = useDispatch();
 
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-
-	const formSchema = z.object({
-		username: z.string().min(2).max(50),
+	const formSignin = z.object({
+		email: z.string().email(),
+		password: z.string().min(5),
 	});
 
-	// 1. Define your form.
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const formSigninInstance = useForm<z.infer<typeof formSignin>>({
+		resolver: zodResolver(formSignin),
 		defaultValues: {
-			username: "",
+			email: "",
+			password: "",
 		},
 	});
 
-	// 2. Define a submit handler.
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
-		console.log(values);
+	const formSignup = z.object({
+		username: z.string().min(3).max(30),
+		email: z.string().email(),
+		password: z.string().min(5),
+	});
+
+	const formSignupInstance = useForm<z.infer<typeof formSignup>>({
+		resolver: zodResolver(formSignup),
+		defaultValues: {
+			username: "",
+			email: "",
+			password: "",
+		},
+	});
+
+	async function onSigninSubmit(values: z.infer<typeof formSignin>) {
+		const { email, password } = values;
+		const response = await signin(email, password);
+
+		if (response == null) {
+			setAlert(true);
+			setAlertData({
+				type: "destructive",
+				title: "Error",
+				message: "Error to create account",
+			});
+		} else {
+			dispatch(refresh(response.data));
+		}
+	}
+
+	async function onSignupSubmit(values: z.infer<typeof formSignup>) {
+		const { username, email, password } = values;
+		const response = await signup(username, email, password);
+
+		if (response == null) {
+			setAlert(true);
+			setAlertData({
+				type: "destructive",
+				title: "Error",
+				message: "Error to create account",
+			});
+		} else {
+			setAlert(true);
+			setAlertData({
+				type: "default",
+				title: "Succes",
+				message: "Your account has been created successfully.",
+			});
+		}
 	}
 
 	return (
@@ -64,56 +112,54 @@ export default function AuthenticationPage() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-2">
-						<Form {...form}>
+						<Form {...formSigninInstance}>
 							<form
-								onSubmit={form.handleSubmit(onSubmit)}
+								onSubmit={formSigninInstance.handleSubmit(
+									onSigninSubmit,
+								)}
 								className="space-y-8"
 							>
 								<FormField
-									control={form.control}
-									name="username"
+									control={formSigninInstance.control}
+									name="email"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Username</FormLabel>
+											<FormLabel>Email</FormLabel>
 											<FormControl>
 												<Input
-													placeholder="shadcn"
+													type="email"
+													placeholder="skywalker@gmail.com"
 													{...field}
 												/>
 											</FormControl>
-											<FormDescription>
-												This is your public display
-												name.
-											</FormDescription>
+
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
+
+								<FormField
+									control={formSigninInstance.control}
+									name="password"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Password</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="**********"
+													type="password"
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
 								<Button type="submit">Submit</Button>
 							</form>
 						</Form>
-						<div className="space-y-1">
-							<Label htmlFor="name">Email</Label>
-							<Input
-								id="name"
-								placeholder="skywalker@gmail.com"
-								type="email"
-							/>
-						</div>
-						<div className="space-y-1">
-							<Label htmlFor="username">Password</Label>
-							<Input
-								id="username"
-								placeholder="*******"
-								type="password"
-							/>
-						</div>
 					</CardContent>
-					<CardFooter>
-						<div className="flex w-full justify-center">
-							<Button>Submit</Button>
-						</div>
-					</CardFooter>
 				</Card>
 			</TabsContent>
 			<TabsContent value="signup">
@@ -125,56 +171,73 @@ export default function AuthenticationPage() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-2">
-						<div className="space-y-1">
-							<Label htmlFor="username">Username</Label>
-							<Input
-								id="username"
-								placeholder="Skywalker"
-								type="text"
-							/>
-						</div>
-						<div className="space-y-1">
-							<Label htmlFor="email">Email</Label>
-							<Input
-								id="email"
-								type="email"
-								placeholder="skywalker@gmail.com"
-							/>
-						</div>
-						<div className="space-y-1">
-							<Label htmlFor="password">Password</Label>
-							<Input
-								id="password"
-								placeholder="*******"
-								type="password"
-							/>
-						</div>
+						<Form {...formSignupInstance}>
+							<form
+								onSubmit={formSignupInstance.handleSubmit(
+									onSignupSubmit,
+								)}
+								className="space-y-8"
+							>
+								<FormField
+									control={formSignupInstance.control}
+									name="username"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Username</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="Skywalker"
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={formSignupInstance.control}
+									name="email"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Email</FormLabel>
+											<FormControl>
+												<Input
+													type="email"
+													placeholder="skywalker@gmail.com"
+													{...field}
+												/>
+											</FormControl>
+
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={formSignupInstance.control}
+									name="password"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Password</FormLabel>
+											<FormControl>
+												<Input
+													placeholder="**********"
+													type="password"
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<Button type="submit">Submit</Button>
+							</form>
+						</Form>
 					</CardContent>
-					<CardFooter>
-						<div className="flex w-full justify-center">
-							<Button>Submit</Button>
-						</div>
-					</CardFooter>
 				</Card>
 			</TabsContent>
 		</Tabs>
 	);
-}
-function useState<T>(arg0: boolean): [any, any] {
-	throw new Error("Function not implemented.");
-}
-
-function signup(arg0: string, arg1: string, arg2: string) {
-	throw new Error("Function not implemented.");
-}
-
-function refresh(arg0: any): any {
-	throw new Error("Function not implemented.");
-}
-
-function signin(arg0: string, arg1: string): any {
-	throw new Error("Function not implemented.");
-}
-function useRef<T>(arg0: null) {
-	throw new Error("Function not implemented.");
 }

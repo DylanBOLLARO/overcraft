@@ -9,6 +9,7 @@ import { Label } from "../../../components/ui/label";
 import Header from "./Header";
 import MusicPage from "../../../components/main-page/page";
 import { AlertDestructive } from "../../../components/AlertDestructive";
+import { style } from "@mui/system";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -36,6 +37,21 @@ export default function Layout({ children, title }: LayoutProps) {
 	const [open, setOpen] = useState(true);
 	const [message, setMessage] = useState("");
 	const [typeColors, setTypeColors] = useState("");
+
+	const [alert, setAlert] = useState(false);
+	const [alertData, setAlertData] = useState({
+		type: "default",
+		title: "",
+		message: "",
+	});
+
+	useEffect(() => {
+		if (alert) {
+			setTimeout(() => {
+				setAlert(false);
+			}, 5000);
+		}
+	}, [alert]);
 
 	useEffect(() => {
 		if (userLogged) {
@@ -69,13 +85,16 @@ export default function Layout({ children, title }: LayoutProps) {
 					</>
 				) : (
 					<>
-						{/* <AlertDestructive /> */}
+						{alert && <AlertDestructive alertData={alertData} />}
 
 						<div className="flex flex-col pt-10 items-center gap-10 select-none">
 							<p className="font-mono font-bold text-5xl  text-center">
 								OverCraft
 							</p>
-							<AuthenticationPage />
+							<AuthenticationPage
+								setAlert={setAlert}
+								setAlertData={setAlertData}
+							/>
 						</div>
 					</>
 				)}
