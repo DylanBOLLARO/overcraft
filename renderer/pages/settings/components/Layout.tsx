@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { Label } from "../../../components/ui/label";
 import Header from "./Header";
 import MusicPage from "../../../components/main-page/page";
+import { AlertDestructive } from "../../../components/AlertDestructive";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -68,12 +69,14 @@ export default function Layout({ children, title }: LayoutProps) {
 					</>
 				) : (
 					<>
-						<div className="pt-10 text-center">
-							<p className="font-mono font-bold text-5xl text-blue-700">
+						{/* <AlertDestructive /> */}
+
+						<div className="flex flex-col pt-10 items-center gap-10 select-none">
+							<p className="font-mono font-bold text-5xl  text-center">
 								OverCraft
 							</p>
+							<AuthenticationPage />
 						</div>
-						<AuthenticationPage />
 					</>
 				)}
 			</ThemeProvider>
