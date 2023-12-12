@@ -33,6 +33,7 @@ export default function FormDialog() {
 	};
 
 	const handleSubmite = async () => {
+		console.log("submited");
 		if (createAccount) {
 			signup(email, password, username);
 			setOpen(false);

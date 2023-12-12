@@ -71,7 +71,7 @@ const createSecondWindow = async () => {
 		await mainWindow.loadURL("app://./settings/settings.html");
 	} else {
 		await mainWindow.loadURL(`http://localhost:${port}/settings/settings`);
-		// mainWindow.webContents.openDevTools();
+		mainWindow.webContents.openDevTools();
 	}
 })();
 
@@ -86,6 +86,10 @@ app.on("ready", () => {
 			variableValue
 		);
 		mainWindow.webContents.send("variable-value-from-main", variableValue);
+	});
+
+	ipcMain.on('quit-app', () => {
+		app.quit();
 	});
 
 	ipcMain.on("send-variable-to-play", (event, variableValue) => {

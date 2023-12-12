@@ -1,11 +1,13 @@
 import Head from "next/head";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Header from "./Header";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import CustomizedSnackbars from "./CustomizedSnackbars";
 import { useEffect, useState } from "react";
 import { ipcRenderer } from "electron";
+import AuthenticationPage from "../../../components/AuthenticationPage";
+import { ThemeProvider } from "next-themes";
+import { Label } from "../../../components/ui/label";
+import Header from "./Header";
+import MusicPage from "../../../components/main-page/page";
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -14,7 +16,7 @@ interface LayoutProps {
 
 export default function Layout({ children, title }: LayoutProps) {
 	const userLogged = useSelector(
-		(state: RootState) => state.userLogged.value
+		(state: RootState) => state.userLogged.value,
 	);
 
 	useEffect(() => {
@@ -25,7 +27,7 @@ export default function Layout({ children, title }: LayoutProps) {
 
 			ipcRenderer.send(
 				"send-variable-to-play",
-				userLogged && userLogged.user.id
+				userLogged && userLogged.user.id,
 			);
 		});
 	}, [userLogged]);
@@ -46,35 +48,33 @@ export default function Layout({ children, title }: LayoutProps) {
 		}
 	}, [userLogged]);
 
-	const darkTheme = createTheme({
-		palette: {
-			mode: "dark",
-		},
-	});
-
 	return (
 		<>
 			<Head>
-				<title>sc2-build-order-ts-settings</title>
+				<title>OverCraft</title>
 			</Head>
-			<ThemeProvider theme={darkTheme}>
-				<Header title={title || ""} />
-				<CustomizedSnackbars
-					open={open}
-					setOpen={setOpen}
-					message={message}
-					type={typeColors}
-				/>
-				;
+
+			<ThemeProvider
+				attribute="class"
+				defaultTheme="dark"
+				enableSystem
+				disableTransitionOnChange
+			>
 				{userLogged ? (
-					<main className="mt-24">{children}</main>
+					<>
+						{/* <Header title={title || ""} /> */}
+						<MusicPage />
+						{/* <main className="mt-24">{children}</main> */}
+					</>
 				) : (
-					<main className="flex flex-col m-24 gap-5">
-						<p className="text-lg text-zinc-300">
-							Afin de pouvoir utiliser l'application, merci de
-							vous connecter !
-						</p>
-					</main>
+					<>
+						<div className="pt-10 text-center">
+							<p className="font-mono font-bold text-5xl text-blue-700">
+								OverCraft
+							</p>
+						</div>
+						<AuthenticationPage />
+					</>
 				)}
 			</ThemeProvider>
 		</>

@@ -1,12 +1,12 @@
 export const SETTINGS_OF_SETTINGS_WINDOW = {
-	backgroundColor: "#27272a",
-	width: 1200,
-	height: 800,
+	width: 1600,
+	height: 900,
 	minHeight: 600,
 	minWidth: 800,
 	webPreferences: {
 		nodeIntegration: true,
 	},
+	autoHideMenuBar: true
 };
 
 export const SETTINGS_OF_PLAY_WINDOW = {
