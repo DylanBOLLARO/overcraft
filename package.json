@@ -8,6 +8,8 @@
 	"scripts": {
 		"dev": "nextron",
 		"build": "nextron build",
+		"start": "electron .",
+		"build:win64": "nextron build --win --x64",
 		"postinstall": "electron-builder install-app-deps"
 	},
 	"dependencies": {
@@ -40,7 +42,7 @@
 		"@types/node": "^18.11.18",
 		"@types/react": "^18.0.26",
 		"autoprefixer": "^10.4.16",
-		"electron": "^26.2.2",
+		"electron": "^21",
 		"electron-builder": "^24.6.4",
 		"next": "^12.3.4",
 		"nextron": "^8.12.0",
