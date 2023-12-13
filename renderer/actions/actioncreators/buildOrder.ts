@@ -14,36 +14,6 @@ async function getAllBuild(id: number) {
 	}
 }
 
-async function signup(username: string, email: string, password: string) {
-	try {
-		const response = await axios.post(`http://${process.env.SUPERYETI_API}/auth/signup`, {
-			username,
-			email,
-			password,
-		});
-		return response;
-	} catch (error) {
-		console.error(error);
-		return null;
-	}
-}
-
-async function signin(email: string, password: string) {
-	try {
-		const response = await axios.post(
-			`http://${process.env.SUPERYETI_API}/auth/signin`,
-			{
-				email,
-				password,
-			}
-		);
-		return response;
-	} catch (error) {
-		console.error(error);
-		return null;
-	}
-}
-
 async function newBuild(
 	title: string,
 	playrace: string,
@@ -176,8 +146,6 @@ async function deleteBuild(idOfBuild: any) {
 
 export {
 	getAllBuild,
-	signup,
-	signin,
 	newBuild,
 	addLine,
 	getAllLines,

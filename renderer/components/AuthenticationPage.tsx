@@ -2,16 +2,13 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from "./ui/card";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { useDispatch } from "react-redux";
-import { useState } from "react";
 
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,14 +17,14 @@ import { useForm } from "react-hook-form";
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormMessage,
 } from "./ui/form";
-import { signin, signup } from "../actions/actioncreators/buildOrder";
 import { refresh } from "../features/userLogged/userLoggedSlice";
+import { SIGNIN, SIGNUP } from "../constants/api";
+import { fetch } from "../services/networking";
 
 export default function AuthenticationPage({ setAlert, setAlertData }: any) {
 	const dispatch = useDispatch();
@@ -61,39 +58,53 @@ export default function AuthenticationPage({ setAlert, setAlertData }: any) {
 	});
 
 	async function onSigninSubmit(values: z.infer<typeof formSignin>) {
-		const { email, password } = values;
-		const response = await signin(email, password);
+		const { status, statusText, data }: any = await fetch(SIGNIN, {
+			...values,
+		});
 
-		if (response == null) {
-			setAlert(true);
-			setAlertData({
-				type: "destructive",
-				title: "Error",
-				message: "Error to create account",
-			});
-		} else {
-			dispatch(refresh(response.data));
+		switch (status) {
+			case 201:
+				dispatch(refresh(data));
+				break;
+
+			case 409:
+				setAlert(true);
+				setAlertData({
+					type: "destructive",
+					title: "Error",
+					message: statusText,
+				});
+				break;
+
+			default:
+				break;
 		}
 	}
 
 	async function onSignupSubmit(values: z.infer<typeof formSignup>) {
-		const { username, email, password } = values;
-		const response = await signup(username, email, password);
+		const { status, statusText } = await fetch(SIGNUP, { ...values });
 
-		if (response == null) {
-			setAlert(true);
-			setAlertData({
-				type: "destructive",
-				title: "Error",
-				message: "Error to create account",
-			});
-		} else {
-			setAlert(true);
-			setAlertData({
-				type: "default",
-				title: "Succes",
-				message: "Your account has been created successfully.",
-			});
+		switch (status) {
+			case 201:
+				setAlert(true);
+				setAlertData({
+					type: "default",
+					title: "Succes",
+					message: statusText,
+				});
+				break;
+
+			case 409:
+				setAlert(true);
+				setAlertData({
+					type: "destructive",
+					title: "Error",
+					message: statusText,
+				});
+				break;
+
+			default:
+				break;
 		}
 	}
 

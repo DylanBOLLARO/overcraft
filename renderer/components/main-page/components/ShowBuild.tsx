@@ -1,10 +1,11 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { Separator } from "../../ui/separator";
-import { AlbumArtwork } from "../components/album-artwork";
+import { AlbumArtwork } from "./album-artwork";
 import { listenNowAlbums } from "../data/albums";
 
-const TopBuilds = () => {
+const ShowBuild = ({ build_list }: any) => {
+	console.log(build_list);
 	return (
 		<Tabs defaultValue="music" className="space-y-6 px-4 py-6 lg:px-8">
 			<div className="space-between flex items-center">
@@ -44,4 +45,4 @@ const TopBuilds = () => {
 	);
 };
 
-export default TopBuilds;
+export default ShowBuild;
