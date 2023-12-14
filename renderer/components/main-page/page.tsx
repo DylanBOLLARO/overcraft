@@ -1,20 +1,20 @@
 import { Menu } from "./components/menu";
 import { Sidebar } from "./components/sidebar";
 import { useState } from "react";
-import DashBoard from "./views/DashBoard";
-import TopBuilds from "./views/TopBuilds";
-import ShowBuild from "./components/ShowBuild";
+import ShowAllBuilds from "./components/ShowAllBuilds";
+import UpdateBuild from "./components/UpdateBuild";
+import { ENUM_VIEW_PAGE } from "../../constants/main";
 
 export default function MusicPage() {
-	const [view, setView] = useState("topbuilds");
+	const [view, setView] = useState(ENUM_VIEW_PAGE.SHOW);
 
-	const renderComponent = () => {
+	const renderView = () => {
 		switch (view) {
-			case "topbuilds":
-				return <TopBuilds />;
+			case ENUM_VIEW_PAGE.SHOW:
+				return <ShowAllBuilds setView={setView} />;
 
-			case "dashboard":
-				return <DashBoard />;
+			case ENUM_VIEW_PAGE.UPDATE:
+				return <UpdateBuild setView={setView} />;
 
 			default:
 				break;
@@ -27,7 +27,7 @@ export default function MusicPage() {
 			<Menu />
 			<div className="flex flex-row">
 				<Sidebar setView={setView} view={view} />
-				<ShowBuild />
+				{renderView()}
 			</div>
 		</>
 	);

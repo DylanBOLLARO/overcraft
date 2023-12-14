@@ -1,9 +1,6 @@
+import { ENUM_VIEW_PAGE } from "../../../constants/main";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
-import { ScrollArea } from "../../ui/scroll-area";
-
-import { Playlist } from "../data/playlists";
-
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 	setView: any;
 	view: any;
@@ -23,12 +20,13 @@ export function Sidebar({ className, setView, view }: SidebarProps) {
 				</h2>
 				<div className="space-y-1">
 					<Button
+						disabled
 						variant="ghost"
 						className={`w-full justify-start ${
-							view === "topbuilds" && "bg-secondary"
+							view === ENUM_VIEW_PAGE.UPDATE && "bg-secondary"
 						}`}
 						onClick={() => {
-							setView("topbuilds");
+							setView(ENUM_VIEW_PAGE.UPDATE);
 						}}
 					>
 						<svg
@@ -51,10 +49,10 @@ export function Sidebar({ className, setView, view }: SidebarProps) {
 					<Button
 						variant="ghost"
 						className={`w-full justify-start ${
-							view === "dashboard" && "bg-secondary"
+							view === ENUM_VIEW_PAGE.SHOW && "bg-secondary"
 						}`}
 						onClick={() => {
-							setView("dashboard");
+							setView(ENUM_VIEW_PAGE.SHOW);
 						}}
 					>
 						<svg

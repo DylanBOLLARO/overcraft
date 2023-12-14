@@ -22,7 +22,7 @@ export async function fetch(api: any, postParams = {}, access_token = null) {
         const { form, url, method } = api
         let base_url = process.env.SUPERYETI_API;
         let objPostParams = { ...form, ...postParams };
-        let headers: any = createHeaders();
+        let headers: any = createHeaders(access_token);
 
         const response = await axios({
             url: `http://${base_url}${url}`,

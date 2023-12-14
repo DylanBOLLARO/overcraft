@@ -11,3 +11,8 @@ export const namesAndColors = [
 ];
 
 export const ALL_RACE = ["terran", "zerg", "protoss"];
+
+export enum ENUM_VIEW_PAGE {
+	SHOW,
+	UPDATE,
+}
